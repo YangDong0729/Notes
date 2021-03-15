@@ -1,0 +1,121 @@
+# 题目详情
+One important factor to identify acute stroke (急性脑卒中) is the volume of the stroke core. ==Given the results of image analysis in which the core regions are identified in each MRI slice, your job is to calculate the volume of the stroke core.==
+
+### Input Specification:
+
+Each input file contains one test case. For each case, the first line contains ==4 positive integers: $M$, $N$, $L$ and $T$, where $M$ and $N$ are the sizes of each slice (i.e. pixels of a slice are in an $M \times N$ matrix, and the maximum resolution is 128 by 128); $L$ ($\le 60$) is the number of slices of a brain; and $T$ is the integer threshold (i.e. if the volume of a connected core is less than $T$, then that core must not be counted).==
+
+Then $L$ slices are given. Each slice is represented by an $M \times N$ matrix of 0's and 1's, where 1 represents a pixel of stroke, and 0 means normal. Since the thickness of a slice is a constant, we only have to count the number of 1's to obtain the volume. However, ==there might be several separated core regions in a brain, and only those with their volumes no less than $T$ are counted==. ==Two pixels are **connected** and hence belong to the same region if they share a common side, as shown by Figure 1 where all the 6 red pixels are connected to the blue one.==
+
+![figstroke.jpg](https://images.ptausercontent.com/f85c00cc-62ce-41ff-8dd0-d1c288d87409.jpg)
+
+Figure 1
+
+### Output Specification:
+
+For each case, output in a line the total volume of the stroke core.
+
+### Sample Input:
+
+    3 4 5 2
+    1 1 1 1
+    1 1 1 1
+    1 1 1 1
+    0 0 1 1
+    0 0 1 1
+    0 0 1 1
+    1 0 1 1
+    0 1 0 0
+    0 0 0 0
+    1 0 1 1
+    0 0 0 0
+    0 0 0 0
+    0 0 0 1
+    0 0 0 1
+    1 0 0 0
+
+
+### Sample Output:
+
+    26
+
+# 题解
+
+在一个三维网格中计算规模大于t的染色区域的个数。
+
+
+
+bfs
+
+```cpp
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+int m, n, l, t;
+int brain[65][130][130];
+int steps[6][3] = { {1,  0,  0},
+                   {-1, 0,  0},
+                   {0,  1,  0},
+                   {0,  -1, 0},
+                   {0,  0,  1},
+                   {0,  0,  -1} };
+
+struct node {
+    int x, y, z;
+};
+
+bool isValid(node& a) {
+    if (a.x < 0 or a.x >= l or
+        a.y < 0 or a.y >= m or
+        a.z < 0 or a.z >= n)
+        return false;
+    return brain[a.x][a.y][a.z] == 1;
+}
+
+int bfs(node start) {
+    int cnt = 0;
+    queue<node> q;
+
+    q.push(start);
+    brain[start.x][start.y][start.z] = 2;
+
+    while (not q.empty()) {
+        node top = q.front();
+        q.pop();
+        ++cnt;
+
+        for (int i = 0; i < 6; ++i) {
+            node next{ top.x + steps[i][0], top.y + steps[i][1], top.z + steps[i][2] };
+            if (isValid(next)) {
+                q.push(next);
+                brain[next.x][next.y][next.z] = 2;
+            }
+        }
+    }
+
+    return cnt;
+}
+
+int main() {
+    cin >> m >> n >> l >> t;
+
+    for (int i = 0; i < l; ++i)
+        for (int j = 0; j < m; ++j)
+            for (int k = 0; k < n; ++k)
+                cin >> brain[i][j][k];
+
+    int total = 0;
+    for (int i = 0; i < l; ++i)
+        for (int j = 0; j < m; ++j)
+            for (int k = 0; k < n; ++k)
+                if (brain[i][j][k] == 1) {
+                    int cnt = bfs({ i, j, k });
+                    if (cnt >= t) total += cnt;
+                }
+
+    cout << total;
+}
+```
+
