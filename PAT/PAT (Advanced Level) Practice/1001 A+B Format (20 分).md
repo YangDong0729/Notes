@@ -21,8 +21,6 @@ For each test case, you should output the sum of $a$ and $b$ in one line. The su
 
 计算$A+B$，输出时每隔三位在数字间加上","。
 
-
-
 从前到后输出每一位，如果当前位满足`(i + 1) % 3 == len % 3`（i从0开始），那么就应该在这位之后输出一个逗号，排除负号和最后一位的情况。
 
 ```cpp
@@ -39,8 +37,10 @@ int main() {
 
     for (int i = 0, len = s.length(); i < len; i++) {
         cout << s[i];
-        if (s[i] == '-' or i == len - 1) continue;
-        if ((i + 1) % 3 == len % 3) cout << ",";
+        if (s[i] == '-' or i == len - 1)
+            continue;
+        if ((i + 1) % 3 == len % 3)
+            cout << ",";
     }
 }
 ```

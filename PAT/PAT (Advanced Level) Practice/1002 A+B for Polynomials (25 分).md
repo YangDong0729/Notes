@@ -1,33 +1,53 @@
-# 题目详情
-The following is from Max Howell @twitter:
-
-    Google: 90% of our engineers use the software you wrote (Homebrew), but you can't invert a binary tree on a whiteboard so fuck off.
-
-
-Now it's your turn to prove that YOU CAN invert a binary tree!
-
+This time, you are supposed to find $A+B$ where $A$ and $B$ are two polynomials.
 ### Input Specification:
-
-Each input file contains one test case. For each case, the first line gives ==a positive integer $N (\le 10)$ which is the total number of nodes in the tree== -- and hence the nodes are numbered from 0 to $N−1$. Then $N$ lines follow, each corresponds to a node from 0 to $N−1$, and gives the indices of the left and right children of the node. If the child does not exist, a `-` will be put at the position. Any pair of children are separated by a space.
+Each input file contains one test case. Each case occupies 2 lines, and each line contains the information of a polynomial:
+$K\ N_1\ a_{N_1}\ N_2\ a_{N_2}\  ...\  N_K\ a_{N_K}$
+where K is the number of nonzero terms in the polynomial, $N_i$  and $a_{N_i}$ ($i=1,2,⋯,K$) are the exponents and coefficients, respectively. It is given that $1≤K≤10$，
+$0≤N_K <⋯<N_2<N_1 ≤1000$.
 
 ### Output Specification:
-
-For each test case, ==print in the first line the level-order, and then in the second line the in-order traversal sequences of the inverted tree==. There must be exactly one space between any adjacent numbers, and no extra space at the end of the line.
-
+For each test case you should output the sum of $A$ and $B$ in one line, with the same format as the input. Notice that there must be NO extra space at the end of each line. Please be accurate to 1 decimal place.
 ### Sample Input:
-
-    8
-    1 -
-    - -
-    0 -
-    2 7
-    - -
-    - -
-    5 -
-    4 6
-
-
+```
+2 1 2.4 0 3.2
+2 2 1.5 1 0.5
+```
 ### Sample Output:
+```
+3 2 1.5 1 2.9 0 3.2
+```
+# 题解
 
-    3 7 2 6 4 0 5 1
-    6 5 7 4 3 2 0 1
+计算多项式$A+B$ 的和。
+
+多项式的次数的范围较小，可以使用哈希直接映射。输出时从后往前输出所有系数不为0的指数和系数。
+```cpp
+#include <cstdio>
+
+constexpr auto SIZE = 10005;
+double poly[SIZE];
+
+int main() {
+    for (int i = 0; i < 2; ++i) {
+        int k;
+        scanf("%d", &k);
+        for (int j = 0; j < k; ++j) {
+            int p;
+            double q;
+            scanf("%d %lf", &p, &q);
+            poly[p] += q;
+        }
+    }
+
+    int cnt = 0;
+    for (int i = 0; i < SIZE; ++i)
+        if (poly[i] != 0)
+            ++cnt;
+    printf("%d", cnt);
+
+    if (cnt)
+        for (int i = SIZE - 1; i >= 0; --i)
+            if (poly[i] != 0)
+                printf(" %d %.1f", i, poly[i]);
+}
+```

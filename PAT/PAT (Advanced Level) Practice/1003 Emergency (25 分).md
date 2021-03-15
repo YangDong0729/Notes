@@ -1,4 +1,3 @@
-# A1003 Emergency
 As an emergency rescue team leader of a city, you are given a special map of your country. ==The map shows several scattered cities connected by some roads. Amount of rescue teams in each city and the length of each road between any pair of cities are marked on the map.== When there is an emergency call to you from some other city, your job is to lead your men to the place as quickly as possible, and at the mean time, call up as many hands on the way as possible.
 
 ### Input Specification:
@@ -29,13 +28,11 @@ For each test case, print in one line two numbers: ==the number of different sho
 
 计算从起点到终点的所有最短路径的个数和这些路径中最大的点权之和。
 
-# 代码
-
 ## Dijkstra
 
 ```cpp
-#include <iostream>
 #include <algorithm>
+#include <iostream>
 #include <queue>
 #include <vector>
 
@@ -46,14 +43,14 @@ using namespace std;
 
 struct edge {
     int to, weight;
-    bool operator>(const edge& x) const {
+    bool operator>(const edge &x) const {
         return weight > x.weight;
     }
 };
 
 bool visited[MAX_V];
 vector<edge> graph[MAX_V];
-int dist[MAX_V], pathCnt[MAX_V], teamSum[MAX_V], teamNum[MAX_V];
+int dist[MAX_V], path_cnt[MAX_V], team_sum[MAX_V], team_num[MAX_V];
 
 void dijkstra(int start) {
     fill_n(dist, MAX_V, INF);
@@ -61,10 +58,10 @@ void dijkstra(int start) {
     dist[start] = 0;
 
     priority_queue<edge, vector<edge>, greater<edge>> pq;
-    pq.push({ start, 0 });
+    pq.push({start, 0});
 
-    pathCnt[start] = 1;
-    teamSum[start] = teamNum[start];
+    path_cnt[start] = 1;
+    team_sum[start] = team_num[start];
 
     while (not pq.empty()) {
         auto top = pq.top();
@@ -75,45 +72,50 @@ void dijkstra(int start) {
 
         visited[u] = true;
 
-        if (dist[u] < uDist) continue;
+        if (dist[u] < uDist)
+            continue;
 
-        for (auto& e : graph[u]) {
+        for (auto &e : graph[u]) {
             int v = e.to;
             int uvWeight = e.weight;
 
             if (not visited[v] and (dist[v] == INF or dist[v] > dist[u] + uvWeight)) {
                 dist[v] = dist[u] + uvWeight;
-                pq.push({ v, dist[v] });
-                pathCnt[v] = pathCnt[u];
-                teamSum[v] = teamNum[v] + teamSum[u];
-            }
-            else if (dist[v] == dist[u] + uvWeight) {
-                pathCnt[v] += pathCnt[u];
-                if (teamSum[v] < teamNum[v] + teamSum[u])
-                    teamSum[v] = teamNum[v] + teamSum[u];
+                pq.push({v, dist[v]});
+                path_cnt[v] = path_cnt[u];
+                team_sum[v] = team_num[v] + team_sum[u];
+            } else if (dist[v] == dist[u] + uvWeight) {
+                path_cnt[v] += path_cnt[u];
+                if (team_sum[v] < team_num[v] + team_sum[u])
+                    team_sum[v] = team_num[v] + team_sum[u];
             }
         }
     }
 }
-                                                                                                             
+
 int main() {
     int n, m, c1, c2;
     cin >> n >> m >> c1 >> c2;
-    for (int i = 0; i < n; ++i) cin >> teamNum[i];
+
+    for (int i = 0; i < n; ++i)
+        cin >> team_num[i];
+
     for (int i = 0; i < m; ++i) {
         int a, b, l;
         cin >> a >> b >> l;
-        graph[a].push_back({ b, l });
-        graph[b].push_back({ a, l });
+        graph[a].push_back({b, l});
+        graph[b].push_back({a, l});
     }
+
     dijkstra(c1);
-    cout << pathCnt[c2] << " " << teamSum[c2];
+
+    cout << path_cnt[c2] << " " << team_sum[c2];
 }
 ```
 
 ## Bellman-Ford
 
-如果使用bellman-ford算法，因为会重复访问节点，所以不能只用一个num数组记录最短路径的个数，还要记录节点的前驱。
+如果使用 bellman-ford 算法，因为会重复访问节点，所以不能只用一个 num 数组记录最短路径的个数，还要记录节点的前驱。
 
 ```cpp
 #include <cstdio>

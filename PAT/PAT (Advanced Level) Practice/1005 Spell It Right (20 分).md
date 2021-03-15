@@ -1,5 +1,3 @@
-# 题目详情
-
 Given a non-negative integer $N$, your task is to compute the sum of all the digits of $N$, and output every digit of the sum in English.
 
 ### Input Specification:
@@ -21,7 +19,7 @@ For each test case, output in one line the digits of the sum in English words. T
 
 # 题解
 
-给一个非负整数`N`，计算`N`的每一位相加的和，然后输出和的每一位的英文读音。
+给一个非负整数 $N$ ，计算 $N$ 的每一位相加的和，然后输出和的每一位的英文读音。
 
 ```cpp
 #include <iostream>
@@ -29,7 +27,7 @@ For each test case, output in one line the digits of the sum in English words. T
 
 using namespace std;
 
-string arr[10] = { "zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine" };
+string arr[10] = {"zero", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
 
 int main() {
     string s;
@@ -40,10 +38,11 @@ int main() {
         sum += s[i] - '0';
 
     string sum_str = to_string(sum);
-    
+
     for (int i = 0; i < sum_str.length(); ++i) {
         cout << arr[sum_str[i] - '0'];
-        if (i + 1 != sum_str.length()) cout << ' ';
+        if (i + 1 != sum_str.length())
+            cout << ' ';
     }
 }
 ```
